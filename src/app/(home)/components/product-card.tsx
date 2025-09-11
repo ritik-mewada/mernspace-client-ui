@@ -9,6 +9,7 @@ import Image from "next/image";
 
 import { Product } from "@/lib/types";
 import ProductModel from "./product-model";
+import { Suspense } from "react";
 
 type PropTypes = { product: Product };
 
@@ -27,7 +28,9 @@ const ProductCard = ({ product }: PropTypes) => {
           <span>From</span> <span className="font-bold">${100}</span>
         </p>
 
-        <ProductModel product={product} />
+        <Suspense fallback={"Loading..."}>
+          <ProductModel product={product} />
+        </Suspense>
       </CardFooter>
     </Card>
   );
