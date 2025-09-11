@@ -40,3 +40,10 @@ export interface Product {
   isPublish: boolean;
   createAt: string;
 }
+
+export interface Topping {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+}
