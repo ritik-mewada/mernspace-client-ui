@@ -16,14 +16,7 @@ import Image from "next/image";
 import ToppingList from "./topping-list";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
-
-export type Product = {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  price: number;
-};
+import { Product } from "@/lib/types";
 
 type PropTypes = { product: Product };
 
@@ -39,7 +32,7 @@ const ProductCard = ({ product }: PropTypes) => {
       </CardContent>
       <CardFooter className="flex items-center justify-between mt-2">
         <p>
-          <span>From</span> <span className="font-bold">${product.price}</span>
+          <span>From</span> <span className="font-bold">${100}</span>
         </p>
 
         <Dialog>

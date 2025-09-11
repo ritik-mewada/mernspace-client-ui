@@ -1,62 +1,55 @@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
-import ProductCard, { Product } from "./components/product-card";
-import { Category } from "@/lib/types";
-
-const products: Product[] = [
-  {
-    id: "1",
-    name: "Margarita Pizza",
-    description: "This is a very tasty pizza",
-    image: "/pizza-main.png",
-    price: 20,
-  },
-  {
-    id: "2",
-    name: "Margarita Pizza",
-    description: "This is a very tasty pizza",
-    image: "/pizza-main.png",
-    price: 20,
-  },
-  {
-    id: "3",
-    name: "Margarita Pizza",
-    description: "This is a very tasty pizza",
-    image: "/pizza-main.png",
-    price: 20,
-  },
-  {
-    id: "4",
-    name: "Margarita Pizza",
-    description: "This is a very tasty pizza",
-    image: "/pizza-main.png",
-    price: 20,
-  },
-  {
-    id: "5",
-    name: "Margarita Pizza",
-    description: "This is a very tasty pizza",
-    image: "/pizza-main.png",
-    price: 20,
-  },
-];
+import ProductCard from "./components/product-card";
+import { Category, Product } from "@/lib/types";
 
 export default async function Home() {
-  const categoryResponse = await fetch(
-    `${process.env.BACKEND_URL}/api/catalog/categories`,
-    {
-      next: {
-        revalidate: 3600,
-      },
-    }
-  );
+  // const categoryResponse = await fetch(
+  //   `${process.env.BACKEND_URL}/api/catalog/categories`,
+  //   {
+  //     next: {
+  //       revalidate: 3600,
+  //     },
+  //   }
+  // );
+
+  // if (!categoryResponse.ok) {
+  //   throw new Error("Failed to load category");
+  // }
+
+  // const categories: Category[] = await categoryResponse.json();
+
+  // const productsResponse = await fetch(
+  //   `${process.env.BACKEND_URL}/api/catalog/products?perPage=100 `,
+  //   {
+  //     next: {
+  //       revalidate: 3600,
+  //     },
+  //   }
+  // );
+
+  // const products: { data: Product[] } = await productsResponse.json();
+  const [categoryResponse, productsResponse] = await Promise.all([
+    fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
+      next: { revalidate: 3600 },
+    }),
+    fetch(`${process.env.BACKEND_URL}/api/catalog/products?perPage=100`, {
+      next: { revalidate: 3600 },
+    }),
+  ]);
 
   if (!categoryResponse.ok) {
-    throw new Error("Failed to load category");
+    throw new Error("Failed to load categories");
+  }
+  if (!productsResponse.ok) {
+    throw new Error("Failed to load products");
   }
 
-  const categories: Category[] = await categoryResponse.json();
+  const [categories, products] = await Promise.all([
+    categoryResponse.json() as Promise<Category[]>,
+    productsResponse.json() as Promise<{ data: Product[] }>,
+  ]);
 
   return (
     <>
@@ -87,7 +80,7 @@ export default async function Home() {
 
       <section>
         <div className="container mx-auto py-12">
-          <Tabs defaultValue="pizza">
+          <Tabs defaultValue={categories[0]._id}>
             <TabsList>
               {categories.map((category) => {
                 return (
@@ -101,20 +94,22 @@ export default async function Home() {
                 );
               })}
             </TabsList>
-            <TabsContent value="pizza">
-              <div className="grid grid-cols-4 gap-6 mt-6">
-                {products.map((product) => (
-                  <ProductCard product={product} key={product.id} />
-                ))}
-              </div>
-            </TabsContent>
-            <TabsContent value="beverages">
-              <div className="grid grid-cols-4 gap-6 mt-6">
-                {products.map((product) => (
-                  <ProductCard product={product} key={product.id} />
-                ))}
-              </div>
-            </TabsContent>
+
+            {categories.map((category) => {
+              return (
+                <TabsContent value={category._id} key={category._id}>
+                  <div className="grid grid-cols-4 gap-6 mt-6">
+                    {products.data
+                      .filter(
+                        (product) => product.category._id === category._id
+                      )
+                      .map((product) => (
+                        <ProductCard product={product} key={product._id} />
+                      ))}
+                  </div>
+                </TabsContent>
+              );
+            })}
           </Tabs>
         </div>
       </section>
