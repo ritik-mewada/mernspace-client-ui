@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -7,17 +9,21 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
-import React, { startTransition, Suspense, useState } from "react";
+import { startTransition, Suspense, useState } from "react";
 import ToppingList, { ToppingSkeleton } from "./topping-list";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { Product, Topping } from "@/lib/types";
+import { useAppDispatch } from "@/lib/store/hooks/hooks";
+import { addToCart } from "@/lib/store/features/cart/cartSlice";
 
 interface ChosenConfig {
   [key: string]: string;
 }
 
 const ProductModel = ({ product }: { product: Product }) => {
+  const dispatch = useAppDispatch();
+
   const [chosenConfig, setChosenConfig] = useState<ChosenConfig>();
   const [selectedToppings, setSelectedToppings] = useState<Topping[]>([]);
 
@@ -45,6 +51,17 @@ const ProductModel = ({ product }: { product: Product }) => {
     });
   };
 
+  const handleAddToCart = (product: Product) => {
+    const itemToAdd = {
+      product: product,
+      priceConfiguration: product.priceConfiguration,
+      chosenConfiguration: {
+        priceConfiguration: chosenConfig!,
+        selectedToppings: selectedToppings,
+      },
+    };
+    dispatch(addToCart(itemToAdd));
+  };
   return (
     <Dialog>
       <DialogTrigger className="bg-orange-200 hover:bg-orange-300 text-orange-500 px-6 py-2 rounded-full shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
@@ -110,7 +127,7 @@ const ProductModel = ({ product }: { product: Product }) => {
 
             <div className="flex items-center justify-between mt-12">
               <span className="font-bold">$40</span>
-              <Button>
+              <Button onClick={() => handleAddToCart(product)}>
                 <ShoppingCart size={24} />
                 <span className="ml-2">Add to cart</span>
               </Button>
