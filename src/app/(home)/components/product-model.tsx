@@ -7,13 +7,27 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
-import React, { Suspense } from "react";
+import React, { startTransition, Suspense, useState } from "react";
 import ToppingList, { ToppingSkeleton } from "./topping-list";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { Product } from "@/lib/types";
 
+interface ChosenConfig {
+  [key: string]: string;
+}
+
 const ProductModel = ({ product }: { product: Product }) => {
+  const [chosenConfig, setChosenConfig] = useState<ChosenConfig>();
+
+  const handleRadioChange = (key: string, data: string) => {
+    startTransition(() => {
+      setChosenConfig((prev) => {
+        return { ...prev, [key]: data };
+      });
+    });
+  };
+
   return (
     <Dialog>
       <DialogTrigger className="bg-orange-200 hover:bg-orange-300 text-orange-500 px-6 py-2 rounded-full shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
@@ -42,6 +56,9 @@ const ProductModel = ({ product }: { product: Product }) => {
                     <RadioGroup
                       defaultValue={value.availableOptions[0]}
                       className="grid grid-cols-3 gap-4 mt-2"
+                      onValueChange={(data) => {
+                        handleRadioChange(key, data);
+                      }}
                     >
                       {value.availableOptions.map((option) => {
                         return (
