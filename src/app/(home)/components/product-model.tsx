@@ -146,12 +146,14 @@ const ProductModel = ({ product }: { product: Product }) => {
               }
             )}
 
-            <Suspense fallback={<ToppingSkeleton />}>
-              <ToppingList
-                selectedToppings={selectedToppings}
-                handleCheckBoxCheck={handleCheckBoxCheck}
-              />
-            </Suspense>
+            {product.category.name === "Pizza" && (
+              <Suspense fallback={<ToppingSkeleton />}>
+                <ToppingList
+                  selectedToppings={selectedToppings}
+                  handleCheckBoxCheck={handleCheckBoxCheck}
+                />
+              </Suspense>
+            )}
 
             <div className="flex items-center justify-between mt-12">
               <span className="font-bold">${totalPrice}</span>
