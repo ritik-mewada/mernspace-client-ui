@@ -10,6 +10,16 @@ export interface PriceConfiguration {
     availableOptions: string[];
   };
 }
+
+export interface ProductPriceConfiguration {
+  [key: string]: {
+    priceType: "base" | "additional";
+    availableOptions: {
+      [key: string]: number;
+    };
+  };
+}
+
 export interface Attribute {
   name: string;
   widgetType: "switch" | "radio";
@@ -35,7 +45,7 @@ export interface Product {
   image: string;
   description: string;
   category: Category;
-  priceConfiguration: PriceConfiguration;
+  priceConfiguration: ProductPriceConfiguration;
   attributes: ProductAttribute[];
   isPublish: boolean;
   createAt: string;
