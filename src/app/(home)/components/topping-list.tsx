@@ -31,7 +31,13 @@ export const ToppingSkeleton = () => {
   );
 };
 
-const ToppingList = () => {
+const ToppingList = ({
+  selectedToppings,
+  handleCheckBoxCheck,
+}: {
+  selectedToppings: Topping[];
+  handleCheckBoxCheck: (topping: Topping) => void;
+}) => {
   const [toppings, setToppings] = useState<Topping[]>([]);
 
   useEffect(() => {
@@ -46,23 +52,6 @@ const ToppingList = () => {
     fetchData();
   }, []);
 
-  const [selectedToppings, setSelectedToppings] = useState<Topping[]>([]);
-
-  const handleCheckBoxCheck = (topping: Topping) => {
-    const isAlreadyExists = selectedToppings.some(
-      (element: Topping) => element.id === topping.id
-    );
-
-    startTransition(() => {
-      if (isAlreadyExists) {
-        setSelectedToppings((prev) =>
-          prev.filter((elm: Topping) => elm.id !== topping.id)
-        );
-        return;
-      }
-      setSelectedToppings((prev) => [...prev, topping]);
-    });
-  };
   return (
     <section className="mt-6">
       <h3>Extra toppings</h3>

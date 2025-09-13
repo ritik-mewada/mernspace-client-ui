@@ -11,7 +11,7 @@ import React, { startTransition, Suspense, useState } from "react";
 import ToppingList, { ToppingSkeleton } from "./topping-list";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
-import { Product } from "@/lib/types";
+import { Product, Topping } from "@/lib/types";
 
 interface ChosenConfig {
   [key: string]: string;
@@ -19,12 +19,29 @@ interface ChosenConfig {
 
 const ProductModel = ({ product }: { product: Product }) => {
   const [chosenConfig, setChosenConfig] = useState<ChosenConfig>();
+  const [selectedToppings, setSelectedToppings] = useState<Topping[]>([]);
 
   const handleRadioChange = (key: string, data: string) => {
     startTransition(() => {
       setChosenConfig((prev) => {
         return { ...prev, [key]: data };
       });
+    });
+  };
+
+  const handleCheckBoxCheck = (topping: Topping) => {
+    const isAlreadyExists = selectedToppings.some(
+      (element: Topping) => element.id === topping.id
+    );
+
+    startTransition(() => {
+      if (isAlreadyExists) {
+        setSelectedToppings((prev) =>
+          prev.filter((elm: Topping) => elm.id !== topping.id)
+        );
+        return;
+      }
+      setSelectedToppings((prev) => [...prev, topping]);
     });
   };
 
@@ -85,7 +102,10 @@ const ProductModel = ({ product }: { product: Product }) => {
             )}
 
             <Suspense fallback={<ToppingSkeleton />}>
-              <ToppingList />
+              <ToppingList
+                selectedToppings={selectedToppings}
+                handleCheckBoxCheck={handleCheckBoxCheck}
+              />
             </Suspense>
 
             <div className="flex items-center justify-between mt-12">
