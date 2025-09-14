@@ -13,10 +13,6 @@ import { Tenant } from "@/lib/types";
 
 import CartCounter from "./cart-counter";
 
-// const CartCounterWithoutSSR = dynamic(() => import("./cart-counter"), {
-//   ssr: false,
-// });
-
 const Header = async () => {
   const tenantsResponse = await fetch(
     `${process.env.BACKEND_URL}/api/auth/tenants?perPage=100`,
