@@ -54,7 +54,7 @@ const ToppingList = ({
       setToppings(toppings);
     };
     fetchData();
-  }, []);
+  }, [searchParams]);
 
   return (
     <section className="mt-6">
