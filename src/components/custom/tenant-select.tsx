@@ -8,16 +8,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const TenantSelect = ({ restaurants }: { restaurants: { data: Tenant[] } }) => {
+  const searchParams = useSearchParams();
+
   const router = useRouter();
   const handleValueChange = (value: string) => {
     router.push(`/?restaurantId=${value}`);
   };
 
   return (
-    <Select onValueChange={handleValueChange}>
+    <Select
+      onValueChange={handleValueChange}
+      defaultValue={searchParams.get("restaurantId") || ""}
+    >
       <SelectTrigger className="w-[180px] focus:ring-0 ">
         <SelectValue placeholder="Select Restaurant" />
       </SelectTrigger>
@@ -25,7 +30,7 @@ const TenantSelect = ({ restaurants }: { restaurants: { data: Tenant[] } }) => {
         <SelectGroup>
           {restaurants.data.map((restaurant: Tenant) => {
             return (
-              <SelectItem key={restaurant.id} value={restaurant.id}>
+              <SelectItem key={restaurant.id} value={String(restaurant.id)}>
                 {restaurant.name}
               </SelectItem>
             );
