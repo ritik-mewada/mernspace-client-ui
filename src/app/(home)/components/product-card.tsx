@@ -10,6 +10,7 @@ import Image from "next/image";
 import { Product } from "@/lib/types";
 import ProductModel from "./product-model";
 import { Suspense } from "react";
+import { getFromPrice } from "@/lib/utils";
 
 type PropTypes = { product: Product };
 
@@ -25,7 +26,8 @@ const ProductCard = ({ product }: PropTypes) => {
       </CardContent>
       <CardFooter className="flex items-center justify-between mt-2">
         <p>
-          <span>From</span> <span className="font-bold">${100}</span>
+          <span>From</span>{" "}
+          <span className="font-bold">${getFromPrice(product)}</span>
         </p>
 
         <Suspense fallback={"Loading..."}>
