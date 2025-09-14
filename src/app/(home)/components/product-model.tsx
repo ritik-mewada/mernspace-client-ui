@@ -12,15 +12,27 @@ import Image from "next/image";
 import { startTransition, Suspense, useMemo, useState } from "react";
 import ToppingList, { ToppingSkeleton } from "./topping-list";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart } from "lucide-react";
+import { CircleCheck, ShoppingCart } from "lucide-react";
 import { Product, Topping } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks/hooks";
 import { addToCart, CartItem } from "@/lib/store/features/cart/cartSlice";
 import { hashTheItem } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface ChosenConfig {
   [key: string]: string;
 }
+
+const SuccessToast = () => {
+  return (
+    <>
+      <div className="flex items-center gap-2">
+        <CircleCheck className="text-green-700" />
+        <span>Item added to cart</span>
+      </div>
+    </>
+  );
+};
 
 const ProductModel = ({ product }: { product: Product }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -113,6 +125,7 @@ const ProductModel = ({ product }: { product: Product }) => {
     dispatch(addToCart(itemToAdd));
     setSelectedToppings([]);
     setDialogOpen(false);
+    toast(<SuccessToast />);
   };
 
   return (
