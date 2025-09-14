@@ -1,9 +1,10 @@
 "use client";
 
-import { startTransition, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ToppingCard from "./topping-card";
 import { Topping } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSearchParams } from "next/navigation";
 
 export type PropType = {
   topping: Topping;
@@ -38,12 +39,15 @@ const ToppingList = ({
   selectedToppings: Topping[];
   handleCheckBoxCheck: (topping: Topping) => void;
 }) => {
+  const searchParams = useSearchParams();
   const [toppings, setToppings] = useState<Topping[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const toppingResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/catalog/toppings?tenantId=1`
+        `${
+          process.env.NEXT_PUBLIC_BACKEND_URL
+        }/api/catalog/toppings?tenantId=${searchParams.get("restaurantId")}`
       );
 
       const toppings = await toppingResponse.json();
