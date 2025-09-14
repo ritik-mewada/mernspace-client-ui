@@ -2,14 +2,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProductCard from "./product-card";
 import { Category, Product } from "@/lib/types";
 
-const ProductList = async () => {
+const ProductList = async ({
+  searchParams,
+}: {
+  searchParams: { restaurantId: string };
+}) => {
   const [categoryResponse, productsResponse] = await Promise.all([
     fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
       next: { revalidate: 3600 },
     }),
-    fetch(`${process.env.BACKEND_URL}/api/catalog/products?perPage=100`, {
-      next: { revalidate: 3600 },
-    }),
+    fetch(
+      `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=${searchParams.restaurantId}`,
+      {
+        next: { revalidate: 3600 },
+      }
+    ),
   ]);
 
   if (!categoryResponse.ok) {
