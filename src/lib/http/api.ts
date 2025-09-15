@@ -13,3 +13,8 @@ const ORDER_SERVICE_PREFIX = "/api/order";
 
 export const getCustomer = async () =>
   api.get(`${ORDER_SERVICE_PREFIX}/customer`);
+
+export const addAddress = async (customerId: string, address: string) =>
+  api.patch(`${ORDER_SERVICE_PREFIX}/customer/addresses/${customerId}`, {
+    address,
+  });
