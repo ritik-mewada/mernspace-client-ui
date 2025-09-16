@@ -7,12 +7,13 @@ const ProductList = async ({
 }: {
   searchParams: { restaurantId: string };
 }) => {
+  const awaitedParams = await searchParams;
   const [categoryResponse, productsResponse] = await Promise.all([
     fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
       next: { revalidate: 3600 },
     }),
     fetch(
-      `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=${searchParams.restaurantId}`,
+      `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=${awaitedParams.restaurantId}`,
       {
         next: { revalidate: 3600 },
       }

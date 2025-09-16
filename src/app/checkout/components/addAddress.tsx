@@ -42,7 +42,6 @@ const AddAddress = ({ customerId }: { customerId: string | undefined }) => {
   const { mutate, isPending } = useMutation({
     mutationKey: ["address", customerId],
     mutationFn: async (address: string) => {
-      // todo: put proper check on customerId.
       return await addAddress(customerId!, address);
     },
     onSuccess: () => {
