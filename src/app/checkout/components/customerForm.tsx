@@ -39,7 +39,7 @@ const CustomerForm = () => {
     resolver: zodResolver(formSchema),
   });
 
-  const { data: customer, isLoading } = useQuery<Customer>({
+  const { data: customer } = useQuery<Customer>({
     queryKey: ["customer"],
     queryFn: async () => {
       return await getCustomer().then((res) => res.data as Customer);
