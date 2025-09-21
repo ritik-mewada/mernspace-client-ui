@@ -52,7 +52,13 @@ const CartItems = () => {
       ))}
       <div className="flex justify-between items-center">
         <span className="font-bold text-xl">&#36;{finalTotal}</span>
-        <Button>
+        <Button
+          onClick={() =>
+            router.push(
+              `/checkout/?restaurantId=${searchParams.get("restaurantId")}`
+            )
+          }
+        >
           Checkout
           <ArrowRight size={16} className="ml-2" />
         </Button>
