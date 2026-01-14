@@ -12,7 +12,7 @@ const Header = async () => {
   const session = await getSession();
 
   const tenantsResponse = await fetch(
-    `${process.env.BACKEND_URL}/api/auth/tenants?perPage=100`,
+    `${process.env.BACKEND_URL}/tenants?perPage=100`,
     {
       next: {
         revalidate: 3600,

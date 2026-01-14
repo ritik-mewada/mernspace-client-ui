@@ -23,6 +23,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import OrderSummary from "./orderSummary";
+import { useAppSelector } from "@/lib/store/hooks/hooks";
+import { useRef } from "react";
+import { useSearchParams } from "next/navigation";
 
 const formSchema = z.object({
   address: z.string({
@@ -39,6 +42,10 @@ const CustomerForm = () => {
     resolver: zodResolver(formSchema),
   });
 
+  const searchParams = useSearchParams();
+  const cart = useAppSelector((state) => state.cart);
+  const chosenCouponCode = useRef<string>("");
+
   const { data: customer } = useQuery<Customer>({
     queryKey: ["customer"],
     queryFn: async () => {
@@ -47,7 +54,21 @@ const CustomerForm = () => {
   });
 
   const handlePlaceOrder = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
+    const tenantId = searchParams.get("restaurantId");
+
+    if (!tenantId) return;
+
+    const orderData = {
+      cart: cart.cartItems,
+      cuponCode: chosenCouponCode.current ? chosenCouponCode.current : "",
+      tenantId: searchParams.get("restaurantId"),
+      customerId: customer?._id,
+      comment: data.comment,
+      address: data.address,
+      paymentMode: data.paymentMode,
+    };
+
+    console.log("Order Data: ", orderData);
   };
 
   return (
@@ -209,7 +230,9 @@ const CustomerForm = () => {
               </div>
             </CardContent>
           </Card>
-          <OrderSummary />
+          <OrderSummary
+            handleCouponCodeChange={(code) => (chosenCouponCode.current = code)}
+          />
         </div>
       </form>
     </Form>

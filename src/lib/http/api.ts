@@ -10,15 +10,13 @@ export const api = axios.create({
   },
 });
 
-const ORDER_SERVICE_PREFIX = "/api/order";
-
 export const getCustomer = async () =>
-  api.get(`${ORDER_SERVICE_PREFIX}/customer`);
+  api.get(`http://localhost:5504/customer`);
 
 export const addAddress = async (customerId: string, address: string) =>
-  api.patch(`${ORDER_SERVICE_PREFIX}/customer/addresses/${customerId}`, {
+  api.patch(`http://localhost:5504/customer/addresses/${customerId}`, {
     address,
   });
 
 export const verifyCoupon = (data: CouponCodeData) =>
-  api.post(`${ORDER_SERVICE_PREFIX}/coupons/verify`, data);
+  api.post(`http://localhost:5504/coupons/verify`, data);

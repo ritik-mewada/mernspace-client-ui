@@ -9,21 +9,18 @@ export default async function register(prevState: any, formData: FormData) {
   const password = formData.get("password");
 
   try {
-    const response = await fetch(
-      `${process.env.BACKEND_URL}/api/auth/auth/register`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-        }),
-      }
-    );
+    const response = await fetch(`${process.env.BACKEND_URL}/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        password,
+      }),
+    });
 
     if (!response.ok) {
       const error = await response.json();

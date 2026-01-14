@@ -13,7 +13,11 @@ import React, { useMemo, useRef, useState } from "react";
 const TAXES_PERCENTAGE = 18;
 const DELIVERY_CHARGES = 5;
 
-const OrderSummary = () => {
+const OrderSummary = ({
+  handleCouponCodeChange,
+}: {
+  handleCouponCodeChange: (code: string) => void;
+}) => {
   const searchParams = useSearchParams();
   const couponCodeRef = useRef<HTMLInputElement>(null);
 
@@ -64,11 +68,13 @@ const OrderSummary = () => {
       const couponData = data as { valid: boolean; discount: number };
       if (couponData.valid) {
         setDiscountError("");
+        handleCouponCodeChange(couponCodeRef.current?.value || "");
         setDiscountPercentage(couponData.discount);
         return;
       }
 
       setDiscountError("Coupon is invalid");
+      handleCouponCodeChange("");
       setDiscountPercentage(0);
     },
     onError: (err: any) => {
@@ -155,7 +161,7 @@ const OrderSummary = () => {
           </Button>
         </div>
         <div className="text-right mt-6">
-          <Button variant={"outline"}>Place order</Button>
+          <Button>Place order</Button>
         </div>
       </CardContent>
     </Card>

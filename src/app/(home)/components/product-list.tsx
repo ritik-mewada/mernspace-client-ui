@@ -9,11 +9,11 @@ const ProductList = async ({
 }) => {
   const awaitedParams = await searchParams;
   const [categoryResponse, productsResponse] = await Promise.all([
-    fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
+    fetch(`http://localhost:5503/categories`, {
       next: { revalidate: 3600 },
     }),
     fetch(
-      `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=${awaitedParams.restaurantId}`,
+      `http://localhost:5503/products?perPage=100&tenantId=${awaitedParams.restaurantId}`,
       {
         next: { revalidate: 3600 },
       }
