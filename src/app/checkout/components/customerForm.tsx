@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { getCustomer } from "@/lib/http/api";
-import { Customer } from "@/lib/types";
-import { useQuery } from "@tanstack/react-query";
+import { createOrder, getCustomer } from "@/lib/http/api";
+import { Customer, OrderData } from "@/lib/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Coins, CreditCard } from "lucide-react";
 import AddAddress from "./addAddress";
 import z from "zod";
@@ -45,6 +45,7 @@ const CustomerForm = () => {
   const searchParams = useSearchParams();
   const cart = useAppSelector((state) => state.cart);
   const chosenCouponCode = useRef<string>("");
+  const idempotencyKeyRef = useRef<string>("");
 
   const { data: customer } = useQuery<Customer>({
     queryKey: ["customer"],
@@ -53,21 +54,32 @@ const CustomerForm = () => {
     },
   });
 
+  const { mutate } = useMutation({
+    mutationKey: ["createOrder"],
+    mutationFn: async (data: OrderData) => {
+      const idempotencyKey = idempotencyKeyRef.current
+        ? idempotencyKeyRef.current
+        : crypto.randomUUID() + customer?._id;
+      return await createOrder(data, idempotencyKey);
+    },
+    retry: 3,
+  });
+
   const handlePlaceOrder = (data: z.infer<typeof formSchema>) => {
     const tenantId = searchParams.get("restaurantId");
 
     if (!tenantId) return;
 
-    const orderData = {
+    const orderData: OrderData = {
       cart: cart.cartItems,
-      cuponCode: chosenCouponCode.current ? chosenCouponCode.current : "",
-      tenantId: searchParams.get("restaurantId"),
-      customerId: customer?._id,
+      couponCode: chosenCouponCode.current ? chosenCouponCode.current : "",
+      tenantId: tenantId,
+      customerId: customer ? customer._id : "",
       comment: data.comment,
       address: data.address,
       paymentMode: data.paymentMode,
     };
-
+    mutate(orderData);
     console.log("Order Data: ", orderData);
   };
 

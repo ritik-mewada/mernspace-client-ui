@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CouponCodeData } from "../types";
+import { CouponCodeData, OrderData } from "../types";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -20,3 +20,10 @@ export const addAddress = async (customerId: string, address: string) =>
 
 export const verifyCoupon = (data: CouponCodeData) =>
   api.post(`http://localhost:5504/coupons/verify`, data);
+
+export const createOrder = async (data: OrderData, idempotencyKey: string) =>
+  api.post(`http://localhost:5504/orders`, data, {
+    headers: {
+      "Idempotency-Key": idempotencyKey,
+    },
+  });
