@@ -60,9 +60,16 @@ const CustomerForm = () => {
       const idempotencyKey = idempotencyKeyRef.current
         ? idempotencyKeyRef.current
         : crypto.randomUUID() + customer?._id;
-      return await createOrder(data, idempotencyKey);
+      return await createOrder(data, idempotencyKey).then((res) => res.data);
     },
     retry: 3,
+    onSuccess: (data: { paymentUrl: string }) => {
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      }
+
+      alert("Order placed successfully!");
+    },
   });
 
   const handlePlaceOrder = (data: z.infer<typeof formSchema>) => {
