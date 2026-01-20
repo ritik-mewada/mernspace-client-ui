@@ -10,12 +10,11 @@ import {
   Store,
 } from "lucide-react";
 import Link from "next/link";
-import { is } from "zod/v4/locales";
 
 const Payment = ({
   searchParams,
 }: {
-  searchParams: { success: string; orderId: string };
+  searchParams: { success: string; orderId: string; restaurantId: string };
 }) => {
   const isOrderSuccess = searchParams.success === "true";
 
@@ -75,14 +74,20 @@ const Payment = ({
 
       {isOrderSuccess ? (
         <Button asChild className="mt-6">
-          <Link href={"/"} className="flex items-center gap-2">
+          <Link
+            href={`/order-status/${searchParams.orderId}?restaurantId=${searchParams.restaurantId}`}
+            className="flex items-center gap-2"
+          >
             <ArrowLeft size={20} className="text-white" />
-            <span>Place another order</span>
+            <span>Go to order status page</span>
           </Link>
         </Button>
       ) : (
         <Button asChild className="mt-6">
-          <Link href={"/"} className="flex items-center gap-2">
+          <Link
+            href={`/checkout?restaurantId=${searchParams.restaurantId}`}
+            className="flex items-center gap-2"
+          >
             <ArrowLeft size={20} className="text-white" />
             <span>Go to checkout</span>
           </Link>
