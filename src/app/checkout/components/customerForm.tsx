@@ -23,9 +23,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import OrderSummary from "./orderSummary";
-import { useAppSelector } from "@/lib/store/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks/hooks";
 import { useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import { clearCart } from "@/lib/store/features/cart/cartSlice";
 
 const formSchema = z.object({
   address: z.string({
@@ -38,6 +39,7 @@ const formSchema = z.object({
 });
 
 const CustomerForm = () => {
+  const dispatch = useAppDispatch();
   const customerForm = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
@@ -55,7 +57,7 @@ const CustomerForm = () => {
   });
 
   const { mutate, isPending: isPlaceOrderPending } = useMutation({
-    mutationKey: ["createOrder"],
+    mutationKey: ["order"],
     mutationFn: async (data: OrderData) => {
       const idempotencyKey = idempotencyKeyRef.current
         ? idempotencyKeyRef.current
@@ -63,12 +65,13 @@ const CustomerForm = () => {
       return await createOrder(data, idempotencyKey).then((res) => res.data);
     },
     retry: 3,
-    onSuccess: (data: { paymentUrl: string }) => {
+    onSuccess: (data: { paymentUrl: string | null }) => {
       if (data.paymentUrl) {
         window.location.href = data.paymentUrl;
       }
 
       alert("Order placed successfully!");
+      dispatch(clearCart());
     },
   });
 
